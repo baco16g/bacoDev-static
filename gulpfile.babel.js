@@ -11,7 +11,7 @@ const reload = browserSync.reload;
 // Paths
 const paths = {
 	// Source
-	pug: 'src/**/*.html',
+	pug: 'src/**/*.pug',
 	sass: 'src/assets/sass/**/*.scss',
 	babel: 'src/assets/js/**/*.js',
 	img: 'src/assets/images/**/*.{png,jpg,gif,svg}',
@@ -94,6 +94,7 @@ function bs(cb) {
 
 // Watch
 gulp.task('watch', (done) => {
+	gulp.watch(paths.pug, gulp.series(html));
 	gulp.watch(paths.sass, gulp.series(css));
 	gulp.watch(paths.img, gulp.series(img));
 	gulp.watch(paths.babel, gulp.series(js));
@@ -104,8 +105,8 @@ gulp.task('watch', (done) => {
 gulp.task('build', gulp.series(
 	clean,
 	html,
-	// gulp.parallel(css, img. js),
-	// bs,
+	gulp.parallel(css, img, js),
+	bs,
 ));
 
 // Default Build

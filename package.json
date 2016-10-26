@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "DEBUG=cpac:* gulp & npm start",
+    "start": "node ./node_modules/gulp/bin/gulp.js",
+    "dev": "DEBUG=bacodev:* gulp & npm start",
     "build": "gulp build"
   },
   "repository": {
