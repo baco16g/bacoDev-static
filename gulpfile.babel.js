@@ -34,6 +34,7 @@ function html() {
 	.pipe($.plumber({ errorHandler: $.notify.onError('<%= error.message %>') }))
 	.pipe($.pug({
 		pretty: true,
+		basedir: __dirname + "/src",
 	}))
 	.pipe(gulp.dest(paths.htmlDest));
 }
