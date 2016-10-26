@@ -48,6 +48,9 @@
     "browser": true,
     "mocha": true
   },
+  "plugins": [
+    "pug"
+  ],
   "globals": {
     "expect": true
   }
