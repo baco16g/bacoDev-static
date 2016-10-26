@@ -1,0 +1,15 @@
+.l-page {
+	background: #fff;
+	border: solid 2px #000;
+	padding: 60px 200px;
+
+	&__title {
+		font-size: $font-hdg;
+	}
+
+	&__desc {
+		font-size: $font-desc;
+		font-weight: normal;
+		margin-top: 12px;
+	}
+}

@@ -1,0 +1,46 @@
+.l-nav {
+	&__gNavs {
+
+	}
+
+	&__gLogo { //FIXME: 画像ロゴの場合は書き換え
+		margin-right: auto;
+		border: solid 2px #333;
+
+		> a {
+			width: 120px;
+			height: 25px;
+			line-height: 2.4;
+			background: #000;
+			display: inline-block;
+			font-size: $font-gNav;
+			font-weight: bold;
+			padding: 0 12px;
+			color: #fff;
+		}
+	}
+
+	&__gNav {
+		position: relative;
+		border: solid 2px #333;
+		margin-left: 8px;
+
+		> a {
+			min-width: 120px;
+			height: 25px;
+			line-height: 2.4;
+			display: inline-block;
+			font-size: $font-gNav;
+			font-weight: bold;
+			padding: 0 32px 0 12px;
+
+			&:after {
+				content: "＞";
+				position: absolute;
+				right: 12px;
+				display: inline-block;
+				font-weight: bold;
+			}
+		}
+	}
+}

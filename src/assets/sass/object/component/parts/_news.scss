@@ -1,0 +1,21 @@
+.c-news {
+	background: #fff;
+	padding: 24px;
+	border: solid 5px #000;
+	&__ttl {
+		font-size: $font-newsTtl;
+	}
+	&__list {
+
+	}
+	&__item {
+		padding: 6px;
+		border-bottom: solid 2px #000;
+		&__date {
+			font-size: $font-newsItemData;
+		}
+		&__ttl {
+			font-size: $font-newsItemTtl;
+		}
+	}
+}
