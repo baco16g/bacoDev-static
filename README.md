@@ -18,3 +18,17 @@ $ npm run start # to develop
 # Server running at: http://localhost:3000
 
 ```
+
+jsonでコンテンツを管理したい場合は...
+
+```json
+// json/data.json
+
+{
+  "title": "ここにタイトル"
+}
+```
+```html
+- var title = data.data.title;
+h1 #{title}
+```
