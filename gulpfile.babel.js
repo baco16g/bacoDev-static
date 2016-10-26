@@ -31,6 +31,7 @@ const paths = {
 // HTML
 function html() {
 	return gulp.src(paths.pug)
+	.pipe($.plumber({ errorHandler: $.notify.onError('<%= error.message %>') }))
 	.pipe($.pug({
 		pretty: true,
 	}))
@@ -56,6 +57,7 @@ function css() {
 // Js compile
 function js() {
 	return gulp.src(paths.babel)
+	.pipe($.plumber({ errorHandler: $.notify.onError('<%= error.message %>') }))
 	.pipe($.babel())
 	.pipe(gulp.dest(paths.jsDest));
 }
@@ -63,6 +65,7 @@ function js() {
 // Image optimize
 function img() {
 	return gulp.src(paths.img, { since: gulp.lastRun(img) })
+	.pipe($.plumber({ errorHandler: $.notify.onError('<%= error.message %>') }))
 	.pipe($.imagemin({
 		progressive: true,
 		use: [pngquant({ quality: '60-80', speed: 1 })],
