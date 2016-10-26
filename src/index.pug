@@ -1,9 +1,11 @@
 doctype html
+- var title = data.data.title;
+
 html(lang="ja")
-  head
-    meta(charset="utf-8")
-    link(rel="stylesheet" href="/assets/css/common.css")
-    title bacoDev-static
-  body
-    main.main
-      h2.content_ttl メインタイトル
+	head
+		meta(charset="utf-8")
+		link(rel="stylesheet" href="/assets/css/common.css")
+		title #{title}
+	body
+		main.main
+			h2.content_ttl メインタイトル

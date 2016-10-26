@@ -1,6 +1,7 @@
 import gulp from 'gulp';
 import gulpLoadPlugins from 'gulp-load-plugins';
 import del from 'del';
+import fs from 'fs';
 import browserSync from 'browser-sync';
 import pagespeed from 'psi';
 import pngquant from 'imagemin-pngquant';
@@ -32,6 +33,15 @@ const paths = {
 function html() {
 	return gulp.src(paths.pug)
 	.pipe($.plumber({ errorHandler: $.notify.onError('<%= error.message %>') }))
+	.pipe($.data(function(file){
+		let dirname = './json/';
+		let files = fs.readdirSync(dirname);
+		let json = {};
+		files.forEach(function(filename){
+			json[filename.replace('.json', '')] = require(dirname + filename);
+		});
+		return { data: json };
+	}))
 	.pipe($.pug({
 		pretty: true,
 		basedir: __dirname + "/src",
