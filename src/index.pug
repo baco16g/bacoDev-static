@@ -1,12 +1,10 @@
-doctype html
-html(lang="ja")
-	head
-		meta(charset="utf-8")
-		link(rel="stylesheet" href="/assets/css/common.css")
-		title bacoDev-static
-	body
-		.l-wrapper
-			main(role="main")
-				.l-main
-					include /_layouts/_header
-					include /_pages/_home
+extends /_layouts/_rootLayout
+
+block title
+	title= "ホーム"
+block body
+	.l-wrapper
+		main(role="main")
+			.l-main
+				include /_layouts/_header
+				include /_pages/_home
