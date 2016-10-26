@@ -12,7 +12,7 @@ const reload = browserSync.reload;
 // Paths
 const paths = {
 	// Source
-	pug: 'src/**/*.pug',
+	pug: ['src/**/*.pug', '!src/**/_*.pug'],
 	sass: 'src/assets/sass/**/*.scss',
 	babel: 'src/assets/js/**/*.js',
 	img: 'src/assets/images/**/*.{png,jpg,gif,svg}',
