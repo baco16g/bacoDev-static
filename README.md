@@ -29,7 +29,8 @@ jsonでコンテンツを管理したい場合は...
 }
 ```
 ```html
-// pug
+// .pug
+
 - var title = data.data.title;
 h1 #{title}
 ```
