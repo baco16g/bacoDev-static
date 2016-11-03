@@ -17,8 +17,8 @@ const paths = {
 	// Source
 	pugIndex: ['src/html/index.pug'],
 	pugPages: ['src/html/pages/**/*.pug', '!src/html/pages/**/_*.pug'],
-	sass: 'src/sass/**/*.scss',
-	babel: 'src/js/**/*.js',
+	sass: ['src/sass/**/*.scss', '!src/sass/**/_*.scss'],
+	babel: ['src/js/**/*.js', '!src/js/**/_*.js'],
 	img: 'src/images/**/*.{png,jpg,gif,svg}',
 
 	// Dest
