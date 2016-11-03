@@ -15,10 +15,10 @@ const reload = browserSync.reload;
 
 const paths = {
 	// Source
-	pugIndex: ['src/html/index.pug'],
-	pugPages: ['src/html/pages/**/*.pug', '!src/html/pages/**/_*.pug'],
-	sass: ['src/sass/**/*.scss', '!src/sass/**/_*.scss'],
-	babel: ['src/js/**/*.js', '!src/js/**/_*.js', '!src/js/vendor/*.js'],
+	html: ['src/html/**/*.pug', '!src/html/**/_*.pug', '!src/html/pages'],
+	htmlPages: ['src/html/pages/**/*.pug', '!src/html/pages/**/_*.pug'],
+	css: ['src/sass/**/*.scss', '!src/sass/**/_*.scss'],
+	js: ['src/js/**/*.js', '!src/js/**/_*.js', '!src/js/vendor/*.js'],
 	jsVendor: ['src/js/vendor/*.js'],
 	img: 'src/images/**/*.{png,jpg,gif,svg}',
 
@@ -28,6 +28,10 @@ const paths = {
 	jsDest: 'public/assets/js',
 	imgDest: 'public/assets/images',
 
+	// onlyWatch
+	htmlWatch: 'src/html/**/*.pug',
+	cssWatch: 'src/sass/**/*.scss',
+	jsWatch: 'src/js/**/*.js',
 };
 
 // ==========================================================================
@@ -35,8 +39,8 @@ const paths = {
 // ==========================================================================
 
 // HtmlIndex
-function htmlIndex() {
-	return gulp.src(paths.pugIndex)
+function html() {
+	return gulp.src(paths.html)
 	.pipe($.plumber({ errorHandler: $.notify.onError('<%= error.message %>') }))
 	.pipe($.data(function(file){
 		let dirname = './json/';
@@ -51,12 +55,13 @@ function htmlIndex() {
 		pretty: true,
 		basedir: __dirname + "/src",
 	}))
-	.pipe(gulp.dest(paths.htmlDest));
+	.pipe(gulp.dest(paths.htmlDest))
+	.pipe(reload({ stream: true }));
 }
 
 // htmlPages
 function htmlPages() {
-	return gulp.src(paths.pugPages)
+	return gulp.src(paths.htmlPages)
 	.pipe($.plumber({ errorHandler: $.notify.onError('<%= error.message %>') }))
 	.pipe($.data(function(file){
 		let dirname = './json/';
@@ -71,12 +76,13 @@ function htmlPages() {
 		pretty: true,
 		basedir: __dirname + "/src",
 	}))
-	.pipe(gulp.dest(paths.htmlDest));
+	.pipe(gulp.dest(paths.htmlDest))
+	.pipe(reload({ stream: true }));
 }
 
 // Sass compile
 function css() {
-	return gulp.src(paths.sass)
+	return gulp.src(paths.css)
 	.pipe($.plumber({ errorHandler: $.notify.onError('<%= error.message %>') }))
 	.pipe($.sass())
 	.pipe($.pleeease({
@@ -92,11 +98,12 @@ function css() {
 
 // Js compile
 function jsMain() {
-	return gulp.src(paths.babel)
+	return gulp.src(paths.js)
 	.pipe($.plumber({ errorHandler: $.notify.onError('<%= error.message %>') }))
 	.pipe($.babel())
 	.pipe($.uglify())
-	.pipe(gulp.dest(paths.jsDest));
+	.pipe(gulp.dest(paths.jsDest))
+	.pipe(reload({ stream: true }));
 }
 
 function jsVendor() {
@@ -104,7 +111,8 @@ function jsVendor() {
 	.pipe($.plumber({ errorHandler: $.notify.onError('<%= error.message %>') }))
 	.pipe($.concat('vendor.js'))
 	.pipe($.uglify())
-	.pipe(gulp.dest(paths.jsDest));
+	.pipe(gulp.dest(paths.jsDest))
+	.pipe(reload({ stream: true }));
 }
 
 // Image optimize
@@ -142,19 +150,17 @@ function bs(cb) {
 
 // Watch
 gulp.task('watch', (done) => {
-	gulp.watch(paths.pug, gulp.series(htmlIndex));
-	gulp.watch(paths.pug, gulp.series(htmlPages));
-	gulp.watch(paths.sass, gulp.series(css));
+	gulp.watch(paths.htmlWatch, gulp.series(html, htmlPages));
+	gulp.watch(paths.cssWatch, gulp.series(css));
 	gulp.watch(paths.img, gulp.series(img));
-	gulp.watch(paths.babel, gulp.series(jsMain));
-	gulp.watch(paths.jsVendor, gulp.series(jsVendor));
+	gulp.watch(paths.jsWatch, gulp.series(jsMain, jsVendor));
 	done();
 });
 
 // Default Build
 gulp.task('build', gulp.series(
 	clean,
-	htmlIndex,
+	html,
 	htmlPages,
 	gulp.parallel(css, img, jsMain, jsVendor),
 	bs,
