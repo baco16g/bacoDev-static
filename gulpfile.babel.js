@@ -18,7 +18,8 @@ const paths = {
 	pugIndex: ['src/html/index.pug'],
 	pugPages: ['src/html/pages/**/*.pug', '!src/html/pages/**/_*.pug'],
 	sass: ['src/sass/**/*.scss', '!src/sass/**/_*.scss'],
-	babel: ['src/js/**/*.js', '!src/js/**/_*.js'],
+	babel: ['src/js/**/*.js', '!src/js/**/_*.js', '!src/js/vendor/*.js'],
+	jsVendor: ['src/js/vendor/*.js'],
 	img: 'src/images/**/*.{png,jpg,gif,svg}',
 
 	// Dest
@@ -90,10 +91,19 @@ function css() {
 }
 
 // Js compile
-function js() {
+function jsMain() {
 	return gulp.src(paths.babel)
 	.pipe($.plumber({ errorHandler: $.notify.onError('<%= error.message %>') }))
 	.pipe($.babel())
+	.pipe($.uglify())
+	.pipe(gulp.dest(paths.jsDest));
+}
+
+function jsVendor() {
+	return gulp.src(paths.jsVendor)
+	.pipe($.plumber({ errorHandler: $.notify.onError('<%= error.message %>') }))
+	.pipe($.concat('vendor.js'))
+	.pipe($.uglify())
 	.pipe(gulp.dest(paths.jsDest));
 }
 
@@ -136,7 +146,8 @@ gulp.task('watch', (done) => {
 	gulp.watch(paths.pug, gulp.series(htmlPages));
 	gulp.watch(paths.sass, gulp.series(css));
 	gulp.watch(paths.img, gulp.series(img));
-	gulp.watch(paths.babel, gulp.series(js));
+	gulp.watch(paths.babel, gulp.series(jsMain));
+	gulp.watch(paths.jsVendor, gulp.series(jsVendor));
 	done();
 });
 
@@ -145,7 +156,7 @@ gulp.task('build', gulp.series(
 	clean,
 	htmlIndex,
 	htmlPages,
-	gulp.parallel(css, img, js),
+	gulp.parallel(css, img, jsMain, jsVendor),
 	bs,
 ));
 
