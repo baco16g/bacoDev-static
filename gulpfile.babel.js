@@ -9,10 +9,14 @@ import pngquant from 'imagemin-pngquant';
 const $ = gulpLoadPlugins();
 const reload = browserSync.reload;
 
-// Paths
+// ==========================================================================
+// Pathes
+// ==========================================================================
+
 const paths = {
 	// Source
-	pug: ['src/**/*.pug', '!src/**/_*.pug'],
+	pugIndex: ['src/html/index.pug'],
+	pugPages: ['src/html/pages/**/*.pug', '!src/html/pages/**/_*.pug'],
 	sass: 'src/assets/sass/**/*.scss',
 	babel: 'src/assets/js/**/*.js',
 	img: 'src/assets/images/**/*.{png,jpg,gif,svg}',
@@ -29,9 +33,29 @@ const paths = {
 // Task function
 // ==========================================================================
 
-// HTML
-function html() {
-	return gulp.src(paths.pug)
+// HtmlIndex
+function htmlIndex() {
+	return gulp.src(paths.pugIndex)
+	.pipe($.plumber({ errorHandler: $.notify.onError('<%= error.message %>') }))
+	.pipe($.data(function(file){
+		let dirname = './json/';
+		let files = fs.readdirSync(dirname);
+		let json = {};
+		files.forEach(function(filename){
+			json[filename.replace('.json', '')] = require(dirname + filename);
+		});
+		return { data: json };
+	}))
+	.pipe($.pug({
+		pretty: true,
+		basedir: __dirname + "/src",
+	}))
+	.pipe(gulp.dest(paths.htmlDest));
+}
+
+// htmlPages
+function htmlPages() {
+	return gulp.src(paths.pugPages)
 	.pipe($.plumber({ errorHandler: $.notify.onError('<%= error.message %>') }))
 	.pipe($.data(function(file){
 		let dirname = './json/';
@@ -108,7 +132,8 @@ function bs(cb) {
 
 // Watch
 gulp.task('watch', (done) => {
-	gulp.watch(paths.pug, gulp.series(html));
+	gulp.watch(paths.pug, gulp.series(htmlIndex));
+	gulp.watch(paths.pug, gulp.series(htmlPages));
 	gulp.watch(paths.sass, gulp.series(css));
 	gulp.watch(paths.img, gulp.series(img));
 	gulp.watch(paths.babel, gulp.series(js));
@@ -118,7 +143,8 @@ gulp.task('watch', (done) => {
 // Default Build
 gulp.task('build', gulp.series(
 	clean,
-	html,
+	htmlIndex,
+	htmlPages,
 	gulp.parallel(css, img, js),
 	bs,
 ));
