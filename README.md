@@ -1,25 +1,24 @@
-# bacoDev-static
+# static-boilerplate
 
-静的サイトとかの生成に使用するboilerplateです。
-reactとかvueとか使うほどでもない、って時に使います。
+静的サイトの生成に使用するboilerplate.
 
 ## Get started
 
 ```bash
-$ git clone git@github.com:baco-16g/bacoDev-static.git
+$ git clone git@github.com:baco16g/static-boilerplate.git
 
-$ cd bacoDev-static
+$ cd static-boilerplate
 $ npm install
 ```
 
-```bash
-# run
-$ npm run start # to develop
-# Server running at: http://localhost:3000
+### Tasks
 
-```
+- `npm run dev`
+- `npm run prod`
 
-jsonでコンテンツを管理したい場合は...
+### Other
+
+- jsonで, テキストやパスを一括管理しています.
 
 ```json
 // json/data.json
