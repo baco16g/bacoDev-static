@@ -24,7 +24,7 @@ const config = {
 
 const tasks = {
 	pug: {
-		src: `${config.dirs.src}/pug/!(_)*.pug`,
+		src: [`${config.dirs.src}/pug/!(_)*.pug`, `${config.dirs.src}/pug/pages/**/!(_)*.pug`],
 		dest: `${config.dirs.dest}`,
 		options: {
 			pretty: true,
@@ -33,14 +33,14 @@ const tasks = {
 	},
 	sass: {
 		src: `${config.dirs.src}/sass/!(_)*.{scss,sass}`,
-		dest: `${config.dirs.dest}/css`,
+		dest: `${config.dirs.dest}/assets/css`,
 		options: {
 			outputStyle: 'expanded',
 		},
 	},
 	babel: {
 		src: `${config.dirs.src}/js/app.js`,
-		dest: `${config.dirs.dest}/js`,
+		dest: `${config.dirs.dest}/assets/js`,
 		filename: 'bundle.js',
 	},
 	watch: {
@@ -51,7 +51,7 @@ const tasks = {
 	},
 	images: {
 		src: `${config.dirs.src}/images/**/*.{png,jpg,gif,svg}`,
-		dest: `${config.dirs.dest}/images`,
+		dest: `${config.dirs.dest}/assets/images`,
 	},
 	clean: [
 		config.dirs.dest,
