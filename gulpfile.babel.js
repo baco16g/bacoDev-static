@@ -3,44 +3,22 @@ import gulpLoadPlugins from 'gulp-load-plugins';
 import del from 'del';
 import fs from 'fs';
 import browserSync from 'browser-sync';
-import pagespeed from 'psi';
 import pngquant from 'imagemin-pngquant';
+import webpack from 'webpack';
+import webpackConfig from './webpack.config.babel';
+import webpackStream from 'webpack-stream';
+import config from './config';
 
 const $ = gulpLoadPlugins();
 const reload = browserSync.reload;
-
-// ==========================================================================
-// Pathes
-// ==========================================================================
-
-const paths = {
-	// Source
-	html: ['src/html/**/*.pug', '!src/html/**/_*.pug', '!src/html/pages'],
-	htmlPages: ['src/html/pages/**/*.pug', '!src/html/pages/**/_*.pug'],
-	css: ['src/sass/**/*.scss', '!src/sass/**/_*.scss'],
-	js: ['src/js/**/*.js', '!src/js/**/_*.js', '!src/js/vendor/*.js'],
-	jsVendor: ['src/js/vendor/*.js'],
-	img: 'src/images/**/*.{png,jpg,gif,svg}',
-
-	// Dest
-	htmlDest: 'public',
-	cssDest: 'public/assets/css',
-	jsDest: 'public/assets/js',
-	imgDest: 'public/assets/images',
-
-	// onlyWatch
-	htmlWatch: 'src/html/**/*.pug',
-	cssWatch: 'src/sass/**/*.scss',
-	jsWatch: 'src/js/**/*.js',
-};
 
 // ==========================================================================
 // Task function
 // ==========================================================================
 
 // HtmlIndex
-function html() {
-	return gulp.src(paths.html)
+function pug() {
+	return gulp.src(config.tasks.pug.src)
 	.pipe($.plumber({ errorHandler: $.notify.onError('<%= error.message %>') }))
 	.pipe($.data(function(file){
 		let dirname = './json/';
@@ -51,94 +29,68 @@ function html() {
 		});
 		return { data: json };
 	}))
-	.pipe($.pug({
-		pretty: true,
-		basedir: __dirname + "/src",
-	}))
-	.pipe(gulp.dest(paths.htmlDest))
-	.pipe(reload({ stream: true }));
-}
-
-// htmlPages
-function htmlPages() {
-	return gulp.src(paths.htmlPages)
-	.pipe($.plumber({ errorHandler: $.notify.onError('<%= error.message %>') }))
-	.pipe($.data(function(file){
-		let dirname = './json/';
-		let files = fs.readdirSync(dirname);
-		let json = {};
-		files.forEach(function(filename){
-			json[filename.replace('.json', '')] = require(dirname + filename);
-		});
-		return { data: json };
-	}))
-	.pipe($.pug({
-		pretty: true,
-		basedir: __dirname + "/src",
-	}))
-	.pipe(gulp.dest(paths.htmlDest))
+	.pipe($.pug(config.tasks.pug.options))
+	.pipe(gulp.dest(config.tasks.pug.dest))
 	.pipe(reload({ stream: true }));
 }
 
 // Sass compile
-function css() {
-	return gulp.src(paths.css)
+function sass() {
+	return gulp.src(config.tasks.sass.src)
+	.pipe($.if(!config.envProduction, $.sourcemaps.init()))
 	.pipe($.plumber({ errorHandler: $.notify.onError('<%= error.message %>') }))
-	.pipe($.sass())
+	.pipe($.sass(config.tasks.sass.options))
+	.pipe($.if(!config.envProduction, $.sourcemaps.write()))
 	.pipe($.pleeease({
 		autoprefixer: ['last 2 versions'],
-		minifier: true,
+		minifier: !config.envProduction ? false : true,
 		mqpacker: true,
 	}))
 	.pipe($.size({ title: 'sass' }))
 	.pipe($.concat('common.css'))
-	.pipe(gulp.dest(paths.cssDest))
+	.pipe(gulp.dest(config.tasks.sass.dest))
 	.pipe(reload({ stream: true }));
 }
 
 // Js compile
-function jsMain() {
-	return gulp.src(paths.js)
-	.pipe($.plumber({ errorHandler: $.notify.onError('<%= error.message %>') }))
-	.pipe($.babel())
-	.pipe($.uglify())
-	.pipe(gulp.dest(paths.jsDest))
-	.pipe(reload({ stream: true }));
+function babel() {
+	if (config.envProduction) {
+		webpackConfig.plugins.push(new webpack.optimize.UglifyJsPlugin());
+	} else {
+		webpackConfig.devtool = 'source-map';
+	}
+	return gulp.src(config.tasks.babel.src)
+		.pipe($.plumber())
+		.pipe(webpackStream(webpackConfig, webpack))
+		.pipe(gulp.dest(config.tasks.babel.dest));
 }
 
-function jsVendor() {
-	return gulp.src(paths.jsVendor)
-	.pipe($.plumber({ errorHandler: $.notify.onError('<%= error.message %>') }))
-	.pipe($.concat('vendor.js'))
-	.pipe($.uglify())
-	.pipe(gulp.dest(paths.jsDest))
-	.pipe(reload({ stream: true }));
-}
 
 // Image optimize
-function img() {
-	return gulp.src(paths.img, { since: gulp.lastRun(img) })
+function images() {
+	return gulp.src(config.tasks.images.src, { since: gulp.lastRun(images) })
 	.pipe($.plumber({ errorHandler: $.notify.onError('<%= error.message %>') }))
 	.pipe($.imagemin({
 		progressive: true,
 		use: [pngquant({ quality: '60-80', speed: 1 })],
 	}))
-	.pipe(gulp.dest(paths.imgDest))
-	.pipe($.size({ title: 'img' }))
+	.pipe(gulp.dest(config.tasks.images.dest))
+	.pipe($.size({ title: 'images' }))
 	.pipe(reload({ stream: true }));
 }
 
 // Build folder delete
 function clean(cb) {
-	return del(['public']).then(() => cb());
+	return del([config.dirs.dest]).then(() => cb());
 }
 
 // Local server
 function bs(cb) {
 	return browserSync.init(null, {
 		server: {
-			baseDir: 'public',
+			baseDir: config.dirs.dest,
 		},
+		open: 'external',
 		ghostMode: false,
 		notify: false,
 	}, cb);
@@ -150,19 +102,17 @@ function bs(cb) {
 
 // Watch
 gulp.task('watch', (done) => {
-	gulp.watch(paths.htmlWatch, gulp.series(html, htmlPages));
-	gulp.watch(paths.cssWatch, gulp.series(css));
-	gulp.watch(paths.img, gulp.series(img));
-	gulp.watch(paths.jsWatch, gulp.series(jsMain, jsVendor));
+	gulp.watch(config.tasks.watch.pug, gulp.series(pug));
+	gulp.watch(config.tasks.watch.sass, gulp.series(sass));
+	gulp.watch(config.tasks.watch.images, gulp.series(images));
+	gulp.watch(config.tasks.watch.babel, gulp.series(babel));
 	done();
 });
 
 // Default Build
 gulp.task('build', gulp.series(
 	clean,
-	html,
-	htmlPages,
-	gulp.parallel(css, img, jsMain, jsVendor),
+	gulp.parallel(pug, sass, images, babel),
 	bs,
 ));
 

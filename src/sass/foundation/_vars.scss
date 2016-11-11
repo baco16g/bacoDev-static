@@ -1,36 +1,80 @@
-// ==========================================================================
-//	A、B、C、Dとアルファベット順にする
-// ==========================================================================
+// ==================================================
+// Variables
+//
+// 1. Colors
+// 2. Spaces
+// 3. Media Queries
+// 4. Typography
+// 5. Grids
+// ==================================================
 
-//color
+//
+// 1. Colors
+// --------------------------------------------------
+
+
+// grays
+// --------------------------------------------------
+
+
+// pallets
+// --------------------------------------------------
 $color-primary:;
 $color-secondary:;
 $color-link:;
 $color-default:;
 
-//font-size
-$font-large: 1.6rem;
-$font-medium: 1.4rem;
-$font-small: 1.2rem;
 
-$font-hdg: 2.4rem;
-$font-desc: 1.2rem;
-$font-gNav: 1rem;
-$font-homeNavJp: 2.4rem;
-$font-homeNavEn: 1.4rem;
-$font-homeNavIcon: 2rem;
-$font-newsTtl: 3.2rem;
-$font-newsItemData: 1.2rem;
-$font-newsItemTtl: 1.4rem;
+// brands
+// --------------------------------------------------
+$brand-primary:;
+
+
+
+//
+// 2. Spaces
+// --------------------------------------------------
+
+$space         : 2rem;                 // Regular space margin
+$space-xs      : ($space / 4);         // Extra small space margin
+$space-sm      : ($space / 2);         // Small space margin
+$space-md      : ($space + $space-sm); // Medium space margin
+$space-lg      : ($space * 2);         // Large space margin
+$space-xlg     : ($space * 4);         // Extra Large space margin
+
+$space-gutter  : $space;
+
+
+
+//
+// 3. Media Queries
+// --------------------------------------------------
+
+$screen-xs   : 520px;  // Extra small screen / phone
+$screen-sm   : 768px;  // Small screen / tablet
+$screen-md   : 992px;  // Medium screen / desktop
+$screen-lg   : 1200px; // Large screen / wide desktop
+$screen-xlg  : 1400px; // Extra Large screen / wide desktop
+$screen-xxlg : 1900px; // Extra Large screen / wide desktop
+
+
+
+//
+// 4. Typography
+// --------------------------------------------------
+$font-large					: 1.6rem;
+$font-medium				: 1.4rem;
+$font-small					: 1.2rem;
+
+$font-hdg						: 2.4rem;
+$font-desc					: 1.2rem;
+$font-gNav					: 1rem;
+$font-homeNavJp			: 2.4rem;
+$font-homeNavEn			: 1.4rem;
+$font-homeNavIcon		: 2rem;
+$font-newsTtl				: 3.2rem;
+$font-newsItemData	: 1.2rem;
+$font-newsItemTtl		: 1.4rem;
 
 //font-family
 $font-family-default: "游ゴシック", YuGothic, "ＭＳ ゴシック", "メイリオ", Meiryo, sans-serif;
-
-//media-query
-$media-pc: 768px;
-$media-sp: 767px;
-
-//width
-$width-large:;
-$width-medium:;
-$width-small:;
